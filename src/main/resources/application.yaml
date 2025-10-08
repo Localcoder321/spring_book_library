@@ -1,1 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/library_db
+    username: postgresql
+    password: postgresql
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
 
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
