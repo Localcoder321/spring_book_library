@@ -27,7 +27,4 @@ public class Rental {
     private Instant dueOn;
     @Column(name = "returned_on")
     private Instant returnedOn;
-
-
-
 }

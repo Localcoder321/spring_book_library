@@ -1,5 +1,7 @@
 package dev.localcoder.springbooklibrary.repository;
 
+import dev.localcoder.springbooklibrary.entity.Book;
+import dev.localcoder.springbooklibrary.entity.Reader;
 import dev.localcoder.springbooklibrary.entity.Rental;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +19,10 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
 
     @Query("SELECT r FROM Rental r WHERE r.returnedOn IS NULL AND r.dueOn < :now")
     List<Rental> findOverdue(@Param("now") Instant now);
+
+    List<Rental> findByReaderAndReturnedOnIsNull(Reader reader);
+
+    boolean existsByBookAndReturnedOnIsNull(Book book);
 
     @Query("""
             SELECT r.book.id, r.book.title, COUNT(r.id)
