@@ -7,11 +7,16 @@ create table books (
     is_available boolean not null default true
 );
 
+create index idx_books_title on books(title);
+create index idx_books_author on books(author);
+create index idx_books_genre on books(genre);
+
 create table readers (
     id bigserial primary key,
     name varchar(255) not null,
     email varchar(255) not null unique,
-    registered_on timestamp not null
+    registered_on timestamp not null,
+    constraint uk_readers_email unique(email)
 );
 
 create table rentals (
@@ -22,3 +27,5 @@ create table rentals (
     due_on timestamp not null,
     returned_on timestamp
 );
+
+create index idx_rental_due on rentals(due_on);
