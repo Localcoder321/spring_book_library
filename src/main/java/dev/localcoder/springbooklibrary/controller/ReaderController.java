@@ -31,6 +31,7 @@ public class ReaderController {
         return ResponseEntity.ok(readerService.getById(id));
     }
 
+    @GetMapping
     public ResponseEntity<List<ReaderResponse>> getAllReaders() {
         List<ReaderResponse> readers = readerService.getAll();
         return ResponseEntity.ok(readers);
