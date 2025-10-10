@@ -32,4 +32,6 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
             ORDER BY COUNT(r.id) DESC
             """)
     List<Object[]> findPopularBooks(@Param("from") Instant from, @Param("to") Instant to);
+
+    List<Rental> findByReturnedOnIsNullAndDueOnBefore(Instant now);
 }
