@@ -30,5 +30,4 @@ public class RentalController {
         RentalResponse response = rentalService.returnBook(request);
         return ResponseEntity.ok(response);
     }
-   // public ResponseEntity<Rental> takeBook();
 }

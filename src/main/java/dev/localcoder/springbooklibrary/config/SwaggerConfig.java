@@ -11,7 +11,7 @@ public class SwaggerConfig {
     public OpenAPI apiInfo() {
         return new OpenAPI().info(
                 new Info().title("Library Service Api")
-                        .description("Rest API for book and reader management")
+                        .description("REST API for book and reader management")
                         .version("1.0.0"));
     }
 }

@@ -9,7 +9,7 @@ import java.time.Instant;
 
 @Data
 public class TakeBookRequest {
-    @NonNull
+    @NotNull
     private Long readerId;
     @NotNull
     private Long bookId;
