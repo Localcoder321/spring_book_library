@@ -1,14 +1,15 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/library_db
-    username: postgresql
-    password: postgresql
+    username: postgres
+    password: postgres
   jpa:
     hibernate:
       ddl-auto: validate
     open-in-view: false
   flyway:
     enabled: true
+    ignore-unsupported-database: true
 
 server:
   port: 8080
