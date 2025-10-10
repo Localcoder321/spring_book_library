@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,6 +54,11 @@ public class ReaderServiceImpl implements ReaderService {
                 }).collect(Collectors.toList())
         );
         return response;
+    }
+
+    @Override
+    public List<ReaderResponse> getAll() {
+        return readerRepository.findAll().stream().map(reader -> new ReaderResponse(reader.getId(), reader.getName(), reader.getEmail(), reader.getRegisteredOn(), null)).toList();
     }
 
     private ReaderResponse toResponse(Reader reader) {

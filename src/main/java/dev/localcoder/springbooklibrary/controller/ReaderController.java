@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/readers")
@@ -28,5 +29,10 @@ public class ReaderController {
     @GetMapping("/{id}")
     public ResponseEntity<ReaderResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(readerService.getById(id));
+    }
+
+    public ResponseEntity<List<ReaderResponse>> getAllReaders() {
+        List<ReaderResponse> readers = readerService.getAll();
+        return ResponseEntity.ok(readers);
     }
 }
