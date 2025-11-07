@@ -8,10 +8,10 @@ import dev.localcoder.springbooklibrary.service.RentalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,5 +29,11 @@ public class RentalController {
     public ResponseEntity<RentalResponse> returnBook(@Valid @RequestBody ReturnBookRequest request) {
         RentalResponse response = rentalService.returnBook(request);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<RentalResponse>> getListOfRentals() {
+        List<RentalResponse> rentals = rentalService.getAllRentals();
+        return ResponseEntity.ok(rentals);
     }
 }

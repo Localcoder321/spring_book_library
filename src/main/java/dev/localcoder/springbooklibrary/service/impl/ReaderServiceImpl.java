@@ -58,7 +58,13 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public List<ReaderResponse> getAll() {
-        return readerRepository.findAll().stream().map(reader -> new ReaderResponse(reader.getId(), reader.getName(), reader.getEmail(), reader.getRegisteredOn(), null)).toList();
+        return readerRepository.findAll().stream().map(
+                reader -> new ReaderResponse(
+                        reader.getId(),
+                        reader.getName(),
+                        reader.getEmail(),
+                        reader.getRegisteredOn(),
+                        null)).toList();
     }
 
     private ReaderResponse toResponse(Reader reader) {

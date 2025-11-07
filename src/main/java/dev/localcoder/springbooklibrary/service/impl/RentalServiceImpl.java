@@ -73,6 +73,21 @@ public class RentalServiceImpl implements RentalService {
         return toResponse(rental);
     }
 
+    @Override
+    public List<RentalResponse> getAllRentals() {
+        return rentalRepository.findAll().stream().map(
+             rental -> new RentalResponse(
+                     rental.getId(),
+                     rental.getBook().getId(),
+                     rental.getBook().getTitle(),
+                     rental.getReader().getId(),
+                     rental.getReader().getName(),
+                     rental.getDueOn(),
+                     rental.getTakenOn(),
+                     rental.getReturnedOn())
+        ).toList();
+    }
+
     private RentalResponse toResponse(Rental rental) {
         RentalResponse response = new RentalResponse();
         response.setId(rental.getId());
