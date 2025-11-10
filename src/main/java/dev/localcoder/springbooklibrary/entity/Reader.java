@@ -1,5 +1,6 @@
 package dev.localcoder.springbooklibrary.entity;
 
+import dev.localcoder.springbooklibrary.dto.rental.RentalResponse;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +12,7 @@ import lombok.Setter;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -25,4 +27,6 @@ public class Reader {
     private String email;
     @Column(name = "registered_on", nullable = false)
     private Instant registeredOn =  Instant.now();
+    @Column
+    private List<RentalResponse> rentals;
 }

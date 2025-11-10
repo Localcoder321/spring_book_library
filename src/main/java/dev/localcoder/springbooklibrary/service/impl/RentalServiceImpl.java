@@ -8,6 +8,7 @@ import dev.localcoder.springbooklibrary.entity.Reader;
 import dev.localcoder.springbooklibrary.entity.Rental;
 import dev.localcoder.springbooklibrary.exception.ConflictException;
 import dev.localcoder.springbooklibrary.exception.NotFoundException;
+import dev.localcoder.springbooklibrary.handler.chain.RentalValidationChain;
 import dev.localcoder.springbooklibrary.repository.BookRepository;
 import dev.localcoder.springbooklibrary.repository.ReaderRepository;
 import dev.localcoder.springbooklibrary.repository.RentalRepository;
@@ -25,6 +26,7 @@ public class RentalServiceImpl implements RentalService {
     private final RentalRepository rentalRepository;
     private final BookRepository bookRepository;
     private final ReaderRepository readerRepository;
+    private final RentalValidationChain rentalValidationChain;
 
     @Override
     @Transactional
@@ -34,14 +36,7 @@ public class RentalServiceImpl implements RentalService {
         Book book = bookRepository.findById(request.getBookId())
                 .orElseThrow(() -> new NotFoundException("Book not found"));
 
-        if (!book.isAvailable() || rentalRepository.existsByBookAndReturnedOnIsNull(book)) {
-            throw new ConflictException("Book is not available for rental");
-        }
-
-        List<Rental> activeRentals = rentalRepository.findByReaderAndReturnedOnIsNull(reader);
-        if (activeRentals.size() >= 5) {
-            throw new ConflictException("Reader already has 5 active rentals");
-        }
+        rentalValidationChain.getChain().check(book, reader);
 
         Rental rental = new Rental();
         rental.setBook(book);
