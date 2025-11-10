@@ -12,6 +12,7 @@ import lombok.Setter;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,6 +28,6 @@ public class Reader {
     private String email;
     @Column(name = "registered_on", nullable = false)
     private Instant registeredOn =  Instant.now();
-    @Column
-    private List<RentalResponse> rentals;
+    @OneToMany(mappedBy = "reader", fetch = FetchType.LAZY)
+    private List<Rental> rentals = new ArrayList<>();
 }
