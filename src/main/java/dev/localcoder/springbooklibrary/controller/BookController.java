@@ -1,8 +1,8 @@
 package dev.localcoder.springbooklibrary.controller;
 
 import dev.localcoder.springbooklibrary.dto.book.BookResponse;
-import dev.localcoder.springbooklibrary.dto.book.CreateBookRequest;
-import dev.localcoder.springbooklibrary.dto.book.UpdateBookRequest;
+import dev.localcoder.springbooklibrary.dto.book.BookRequest;
+import dev.localcoder.springbooklibrary.entity.Book;
 import dev.localcoder.springbooklibrary.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
@@ -21,7 +22,7 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<BookResponse> create(@Valid @RequestBody CreateBookRequest request) {
+    public ResponseEntity<BookResponse> create(@Valid @RequestBody BookRequest request) {
         BookResponse created = bookService.createBook(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(created.getId()).toUri();
         return ResponseEntity.created(location).body(created);
@@ -34,7 +35,7 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookResponse> update(@PathVariable Long id, @Valid @RequestBody UpdateBookRequest request) {
+    public ResponseEntity<BookResponse> update(@PathVariable Long id, @Valid @RequestBody BookRequest request) {
         BookResponse updated = bookService.updateBook(id, request);
         return ResponseEntity.ok(updated);
     }
@@ -52,5 +53,21 @@ public class BookController {
             Pageable pageable) {
         Page<BookResponse> page = bookService.search(query, genre, pageable);
         return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<BookResponse>> getAll() {
+        List<BookResponse> books = bookService.getAll();
+        return ResponseEntity.ok(books);
+    }
+
+    @PostMapping("/clone/{id}")
+    public ResponseEntity<BookResponse> cloneBook(
+            @PathVariable Long id,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) Integer year) {
+        BookResponse cloned = bookService.cloneBook(id, title, author, year);
+        return ResponseEntity.status(201).body(cloned);
     }
 }
