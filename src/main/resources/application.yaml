@@ -20,3 +20,12 @@ logging:
     org.springframework.web: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    swagger-ui:
+      persist_authorization: true
+      display-request-duration: true
+      tags-sorter: alpha
+      operations-sorter: method
