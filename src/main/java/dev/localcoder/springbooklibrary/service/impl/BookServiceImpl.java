@@ -2,7 +2,7 @@ package dev.localcoder.springbooklibrary.service.impl;
 
 import dev.localcoder.springbooklibrary.dto.book.BookResponse;
 import dev.localcoder.springbooklibrary.dto.book.BookRequest;
-import dev.localcoder.springbooklibrary.entity.Book;
+import dev.localcoder.springbooklibrary.entity.BookEntity;
 import dev.localcoder.springbooklibrary.exception.NotFoundException;
 import dev.localcoder.springbooklibrary.repository.BookRepository;
 import dev.localcoder.springbooklibrary.service.BookService;
@@ -20,7 +20,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookResponse createBook(BookRequest request) {
-        Book book = new Book();
+        BookEntity book = new BookEntity();
         book.setTitle(request.getTitle());
         book.setAuthor(request.getAuthor());
         book.setGenre(request.getGenre());
@@ -32,13 +32,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookResponse getById(Long id) {
-        Book book = repository.findById(id).orElseThrow(() -> new NotFoundException("Book not found" + id));
+        BookEntity book = repository.findById(id).orElseThrow(() -> new NotFoundException("Book not found" + id));
         return toResponse(book);
     }
 
     @Override
     public BookResponse updateBook(Long id, BookRequest request) {
-        Book book = repository.findById(id).orElseThrow(() -> new NotFoundException("Book not found" + id));
+        BookEntity book = repository.findById(id).orElseThrow(() -> new NotFoundException("Book not found" + id));
         book.setTitle(request.getTitle());
         book.setAuthor(request.getAuthor());
         book.setGenre(request.getGenre());
@@ -68,14 +68,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookResponse cloneBook(Long id, String newTitle, String newAuthor, Integer newYear) {
-        Book original = repository.findById(id).orElseThrow(() -> new NotFoundException("Book not found " + id));
-        Book copy = original.deepCopy();
+        BookEntity original = repository.findById(id).orElseThrow(() -> new NotFoundException("Book not found " + id));
+        BookEntity copy = original.deepCopy();
         if(newTitle != null) copy.setTitle(newTitle);
         if(newAuthor != null) copy.setAuthor(newAuthor);
         if (newYear != null) copy.setYear(newYear);
         copy.setAvailable(true);
 
-        Book saved = repository.save(copy);
+        BookEntity saved = repository.save(copy);
         return toResponse(saved);
     }
 
@@ -91,7 +91,7 @@ public class BookServiceImpl implements BookService {
         )).toList();
     }
 
-    private BookResponse toResponse(Book book) {
+    private BookResponse toResponse(BookEntity book) {
         BookResponse response = new BookResponse();
         response.setId(book.getId());
         response.setTitle(book.getTitle());

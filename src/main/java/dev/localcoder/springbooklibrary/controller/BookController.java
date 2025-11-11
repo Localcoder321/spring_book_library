@@ -2,7 +2,6 @@ package dev.localcoder.springbooklibrary.controller;
 
 import dev.localcoder.springbooklibrary.dto.book.BookResponse;
 import dev.localcoder.springbooklibrary.dto.book.BookRequest;
-import dev.localcoder.springbooklibrary.entity.Book;
 import dev.localcoder.springbooklibrary.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
