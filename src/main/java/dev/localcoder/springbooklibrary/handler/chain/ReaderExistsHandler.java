@@ -1,7 +1,7 @@
 package dev.localcoder.springbooklibrary.handler.chain;
 
-import dev.localcoder.springbooklibrary.entity.Book;
-import dev.localcoder.springbooklibrary.entity.Reader;
+import dev.localcoder.springbooklibrary.entity.BookEntity;
+import dev.localcoder.springbooklibrary.entity.ReaderEntity;
 import dev.localcoder.springbooklibrary.handler.AbstractRentalHandler;
 import dev.localcoder.springbooklibrary.repository.ReaderRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ public class ReaderExistsHandler extends AbstractRentalHandler {
     private final ReaderRepository readerRepository;
 
     @Override
-    protected boolean handle(Book book, Reader reader) {
+    protected boolean handle(BookEntity book, ReaderEntity reader) {
         if(reader == null || !readerRepository.existsById(reader.getId())) {
             throw new RuntimeException("Reader not found with id " + (reader !=null ? reader.getId():null));
         }

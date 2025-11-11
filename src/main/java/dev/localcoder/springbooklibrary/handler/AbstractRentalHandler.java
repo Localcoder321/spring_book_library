@@ -1,7 +1,7 @@
 package dev.localcoder.springbooklibrary.handler;
 
-import dev.localcoder.springbooklibrary.entity.Book;
-import dev.localcoder.springbooklibrary.entity.Reader;
+import dev.localcoder.springbooklibrary.entity.BookEntity;
+import dev.localcoder.springbooklibrary.entity.ReaderEntity;
 
 public abstract class AbstractRentalHandler {
     private AbstractRentalHandler next;
@@ -11,12 +11,12 @@ public abstract class AbstractRentalHandler {
         return next;
     }
 
-    public void check(Book book, Reader reader) {
+    public void check(BookEntity book, ReaderEntity reader) {
         if(!handle(book, reader)) {
             throw new RuntimeException("Rental validation failed at " + this.getClass().getSimpleName());
         }
         if(next != null) next.check(book, reader);
     }
 
-    protected abstract boolean handle(Book book, Reader reader);
+    protected abstract boolean handle(BookEntity book, ReaderEntity reader);
 }
