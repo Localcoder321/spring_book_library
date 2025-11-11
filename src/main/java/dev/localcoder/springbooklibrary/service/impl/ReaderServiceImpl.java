@@ -3,7 +3,7 @@ package dev.localcoder.springbooklibrary.service.impl;
 import dev.localcoder.springbooklibrary.dto.reader.ReaderResponse;
 import dev.localcoder.springbooklibrary.dto.reader.RegisterReaderRequest;
 import dev.localcoder.springbooklibrary.dto.rental.RentalResponse;
-import dev.localcoder.springbooklibrary.entity.Reader;
+import dev.localcoder.springbooklibrary.entity.ReaderEntity;
 import dev.localcoder.springbooklibrary.exception.ConflictException;
 import dev.localcoder.springbooklibrary.exception.NotFoundException;
 import dev.localcoder.springbooklibrary.repository.ReaderRepository;
@@ -28,7 +28,7 @@ public class ReaderServiceImpl implements ReaderService {
             throw new ConflictException("Reader with this email already exists");
         });
 
-        Reader reader = new Reader();
+        ReaderEntity reader = new ReaderEntity();
         reader.setName(request.getName());
         reader.setEmail(request.getEmail());
         reader.setRegisteredOn(Instant.now());
@@ -38,7 +38,7 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public ReaderResponse getById(Long id) {
-        Reader reader = readerRepository.findById(id)
+        ReaderEntity reader = readerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Reader not found: " + id));
         ReaderResponse response = toResponse(reader);
         response.setRentals(
@@ -67,7 +67,7 @@ public class ReaderServiceImpl implements ReaderService {
                         null)).toList();
     }
 
-    private ReaderResponse toResponse(Reader reader) {
+    private ReaderResponse toResponse(ReaderEntity reader) {
         ReaderResponse response = new ReaderResponse();
         response.setId(reader.getId());
         response.setName(reader.getName());

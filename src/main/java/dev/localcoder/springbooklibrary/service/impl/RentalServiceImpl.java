@@ -3,9 +3,9 @@ package dev.localcoder.springbooklibrary.service.impl;
 import dev.localcoder.springbooklibrary.dto.rental.RentalResponse;
 import dev.localcoder.springbooklibrary.dto.rental.ReturnBookRequest;
 import dev.localcoder.springbooklibrary.dto.rental.TakeBookRequest;
-import dev.localcoder.springbooklibrary.entity.Book;
-import dev.localcoder.springbooklibrary.entity.Reader;
-import dev.localcoder.springbooklibrary.entity.Rental;
+import dev.localcoder.springbooklibrary.entity.BookEntity;
+import dev.localcoder.springbooklibrary.entity.ReaderEntity;
+import dev.localcoder.springbooklibrary.entity.RentalEntity;
 import dev.localcoder.springbooklibrary.exception.ConflictException;
 import dev.localcoder.springbooklibrary.exception.NotFoundException;
 import dev.localcoder.springbooklibrary.handler.chain.RentalValidationChain;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
 
-@Service
+@Service("rentalServiceImpl")
 @RequiredArgsConstructor
 public class RentalServiceImpl implements RentalService {
     private final RentalRepository rentalRepository;
@@ -31,14 +31,14 @@ public class RentalServiceImpl implements RentalService {
     @Override
     @Transactional
     public RentalResponse takeBook(TakeBookRequest request) {
-        Reader reader = readerRepository.findById(request.getReaderId())
+        ReaderEntity reader = readerRepository.findById(request.getReaderId())
                 .orElseThrow(() -> new NotFoundException("Reader not found"));
-        Book book = bookRepository.findById(request.getBookId())
+        BookEntity book = bookRepository.findById(request.getBookId())
                 .orElseThrow(() -> new NotFoundException("Book not found"));
 
         rentalValidationChain.getChain().check(book, reader);
 
-        Rental rental = new Rental();
+        RentalEntity rental = new RentalEntity();
         rental.setBook(book);
         rental.setReader(reader);
         rental.setTakenOn(Instant.now());
@@ -53,7 +53,7 @@ public class RentalServiceImpl implements RentalService {
     @Override
     @Transactional
     public RentalResponse returnBook(ReturnBookRequest book) {
-        Rental rental = rentalRepository.findById(book.getRentalId())
+        RentalEntity rental = rentalRepository.findById(book.getRentalId())
                 .orElseThrow(() -> new NotFoundException("Rental not found"));
         if(rental.getReturnedOn() != null) {
             throw new ConflictException("Book already returned");
@@ -61,7 +61,7 @@ public class RentalServiceImpl implements RentalService {
         rental.setReturnedOn(Instant.now());
         rentalRepository.save(rental);
 
-        Book bookRes = rental.getBook();
+        BookEntity bookRes = rental.getBook();
         bookRes.setAvailable(true);
         bookRepository.save(bookRes);
 
@@ -83,7 +83,7 @@ public class RentalServiceImpl implements RentalService {
         ).toList();
     }
 
-    private RentalResponse toResponse(Rental rental) {
+    private RentalResponse toResponse(RentalEntity rental) {
         RentalResponse response = new RentalResponse();
         response.setId(rental.getId());
         response.setBookId(rental.getBook().getId());

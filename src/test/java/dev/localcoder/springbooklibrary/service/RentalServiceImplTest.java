@@ -3,9 +3,9 @@ package dev.localcoder.springbooklibrary.service;
 import dev.localcoder.springbooklibrary.dto.rental.ReturnBookRequest;
 import dev.localcoder.springbooklibrary.dto.rental.TakeBookRequest;
 import dev.localcoder.springbooklibrary.dto.rental.RentalResponse;
-import dev.localcoder.springbooklibrary.entity.Book;
-import dev.localcoder.springbooklibrary.entity.Reader;
-import dev.localcoder.springbooklibrary.entity.Rental;
+import dev.localcoder.springbooklibrary.entity.BookEntity;
+import dev.localcoder.springbooklibrary.entity.ReaderEntity;
+import dev.localcoder.springbooklibrary.entity.RentalEntity;
 import dev.localcoder.springbooklibrary.exception.ConflictException;
 import dev.localcoder.springbooklibrary.exception.NotFoundException;
 import dev.localcoder.springbooklibrary.repository.BookRepository;
@@ -36,13 +36,13 @@ public class RentalServiceImplTest {
     private ReaderRepository readerRepository;
     @InjectMocks
     private RentalServiceImpl rentalService;
-    private Reader sampleReader;
-    private Book sampleBook;
+    private ReaderEntity sampleReader;
+    private BookEntity sampleBook;
 
     @BeforeEach
     void setup() {
-        sampleReader = new Reader(2L, "Ivan", "ivan@example.com", Instant.now());
-        sampleBook = new Book(3L, "Test book", "Author", 2020, "genre", true);
+        sampleReader = new ReaderEntity(2L, "Ivan", "ivan@example.com", Instant.now());
+        sampleBook = new BookEntity(3L, "Test book", "Author", 2020, "genre", true);
     }
 
     @Test
@@ -52,14 +52,14 @@ public class RentalServiceImplTest {
         when(rentalRepository.existsByBookAndReturnedOnIsNull(sampleBook)).thenReturn(false);
         when(rentalRepository.findByReaderAndReturnedOnIsNull(sampleReader)).thenReturn(List.of());
 
-        ArgumentCaptor<Rental> rentalCaptor = ArgumentCaptor.forClass(Rental.class);
+        ArgumentCaptor<RentalEntity> rentalCaptor = ArgumentCaptor.forClass(RentalEntity.class);
         when(rentalRepository.save(rentalCaptor.capture())).thenAnswer(invocation -> {
-            Rental rental = invocation.getArgument(0);
+            RentalEntity rental = invocation.getArgument(0);
             rental.setId(100L);
             return rental;
         });
 
-        ArgumentCaptor<Book> bookCaptor = ArgumentCaptor.forClass(Book.class);
+        ArgumentCaptor<BookEntity> bookCaptor = ArgumentCaptor.forClass(BookEntity.class);
         when(bookRepository.save(bookCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
 
         TakeBookRequest request = new TakeBookRequest();
@@ -74,15 +74,15 @@ public class RentalServiceImplTest {
         assertEquals(2L, response.getReaderId());
         assertNull(response.getReturnedOn());
 
-        Book savedBook = bookCaptor.getValue();
+        BookEntity savedBook = bookCaptor.getValue();
         assertFalse(savedBook.isAvailable(), "Книга должна стать недоступной после выдачи");
-        Rental savedRental = rentalCaptor.getValue();
+        RentalEntity savedRental = rentalCaptor.getValue();
         assertEquals(3L, savedRental.getBook().getId());
         assertEquals(2L, savedRental.getReader().getId());
         assertNotNull(savedRental.getTakenOn());
 
-        verify(rentalRepository, times(1)).save(any(Rental.class));
-        verify(bookRepository, times(1)).save(any(Book.class));
+        verify(rentalRepository, times(1)).save(any(RentalEntity.class));
+        verify(bookRepository, times(1)).save(any(BookEntity.class));
     }
 
     @Test
@@ -91,9 +91,9 @@ public class RentalServiceImplTest {
         when(bookRepository.findById(3L)).thenReturn(Optional.of(sampleBook));
         when(rentalRepository.existsByBookAndReturnedOnIsNull(sampleBook)).thenReturn(false);
 
-        List<Rental> books = new ArrayList<>();
+        List<RentalEntity> books = new ArrayList<>();
         for(int i = 0; i <5; i++) {
-            books.add(new Rental(
+            books.add(new RentalEntity(
                     (long) i, sampleBook, sampleReader, Instant.now(),
                     Instant.now().plusSeconds(10000), null));
         }
@@ -112,7 +112,7 @@ public class RentalServiceImplTest {
 
     @Test
     void takeBook_WhenBookIsNotAvailable() {
-        Book book = new Book(3L, "Testing book", "Tester", 2024, "Test", false);
+        BookEntity book = new BookEntity(3L, "Testing book", "Tester", 2024, "Test", false);
         when(readerRepository.findById(2L)).thenReturn(Optional.of(sampleReader));
         when(bookRepository.findById(3L)).thenReturn(Optional.of(book));
 
@@ -125,34 +125,34 @@ public class RentalServiceImplTest {
 
     @Test
     void returnBook_Success() {
-        Book b = new Book(2L, "T", "A", 2020, "g", false);
-        Reader r = new Reader(1L, "Ivan", "ivan@example.com", Instant.now());
-        Rental rental = new Rental(5L, b, r, Instant.now().minusSeconds(10000), Instant.now().plusSeconds(10000), null);
+        BookEntity b = new BookEntity(2L, "T", "A", 2020, "g", false);
+        ReaderEntity r = new ReaderEntity(1L, "Ivan", "ivan@example.com", Instant.now());
+        RentalEntity rental = new RentalEntity(5L, b, r, Instant.now().minusSeconds(10000), Instant.now().plusSeconds(10000), null);
 
         when(rentalRepository.findById(5L)).thenReturn(Optional.of(rental));
-        ArgumentCaptor<Rental> rentalCaptor = ArgumentCaptor.forClass(Rental.class);
+        ArgumentCaptor<RentalEntity> rentalCaptor = ArgumentCaptor.forClass(RentalEntity.class);
         when(rentalRepository.save(rentalCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
-        ArgumentCaptor<Book> bookCaptor = ArgumentCaptor.forClass(Book.class);
+        ArgumentCaptor<BookEntity> bookCaptor = ArgumentCaptor.forClass(BookEntity.class);
         when(bookRepository.save(bookCaptor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
 
         ReturnBookRequest request = new ReturnBookRequest();
         request.setRentalId(5L);
         var response = rentalService.returnBook(request);
         assertNotNull(response);
-        Rental savedRental = rentalCaptor.getValue();
+        RentalEntity savedRental = rentalCaptor.getValue();
         assertNotNull(savedRental.getReturnedOn(), "returnedOn должен быть заполнен");
-        Book savedBook = bookCaptor.getValue();
+        BookEntity savedBook = bookCaptor.getValue();
         assertTrue(savedBook.isAvailable(), "Книга должна стать доступной после возврата");
 
-        verify(rentalRepository, times(1)).save(any(Rental.class));
-        verify(bookRepository, times(1)).save(any(Book.class));
+        verify(rentalRepository, times(1)).save(any(RentalEntity.class));
+        verify(bookRepository, times(1)).save(any(BookEntity.class));
     }
 
     @Test
     void returnBook_WhenAlreadyReturned() {
-        Book b = new Book(2L, "T", "A", 2020, "g", true);
-        Reader r = new Reader(1L, "Ivan", "ivan@example.com", Instant.now());
-        Rental rental = new Rental(5L, b, r, Instant.now().minusSeconds(10000), Instant.now().plusSeconds(10000), Instant.now().minusSeconds(100));
+        BookEntity b = new BookEntity(2L, "T", "A", 2020, "g", true);
+        ReaderEntity r = new ReaderEntity(1L, "Ivan", "ivan@example.com", Instant.now());
+        RentalEntity rental = new RentalEntity(5L, b, r, Instant.now().minusSeconds(10000), Instant.now().plusSeconds(10000), Instant.now().minusSeconds(100));
         when(rentalRepository.findById(5L)).thenReturn(Optional.of(rental));
 
         ReturnBookRequest request = new ReturnBookRequest();

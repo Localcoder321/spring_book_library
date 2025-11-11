@@ -2,7 +2,7 @@ package dev.localcoder.springbooklibrary.service.impl;
 
 import dev.localcoder.springbooklibrary.dto.book.BookPopularityResponse;
 import dev.localcoder.springbooklibrary.dto.rental.RentalResponse;
-import dev.localcoder.springbooklibrary.entity.Rental;
+import dev.localcoder.springbooklibrary.entity.RentalEntity;
 import dev.localcoder.springbooklibrary.repository.RentalRepository;
 import dev.localcoder.springbooklibrary.service.ReportService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public List<RentalResponse> getOverdueRentals() {
-        List<Rental> rentals = rentalRepository.findByReturnedOnIsNullAndDueOnBefore(Instant.now());
+        List<RentalEntity> rentals = rentalRepository.findByReturnedOnIsNullAndDueOnBefore(Instant.now());
         return rentals.stream().map(rental -> {
             RentalResponse response = new RentalResponse();
             response.setId(rental.getId());
