@@ -11,7 +11,7 @@ import lombok.Setter;
 @Table(name = "books")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Book {
+public class BookEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
@@ -23,8 +23,8 @@ public class Book {
     @Column(name = "is_available", nullable = false)
     private boolean isAvailable = true;
 
-    public Book deepCopy() {
-        Book copy = new Book();
+    public BookEntity deepCopy() {
+        BookEntity copy = new BookEntity();
         copy.setTitle(this.title);
         copy.setAuthor(this.author);
         copy.setYear(this.year);

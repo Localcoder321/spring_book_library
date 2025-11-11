@@ -12,15 +12,15 @@ import java.time.Instant;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Table(name = "rentals")
-public class Rental {
+public class RentalEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(optional = false)
     @JoinColumn(name = "book_id")
-    private Book book;
+    private BookEntity book;
     @ManyToOne(optional = false)
     @JoinColumn(name = "reader_id")
-    private Reader reader;
+    private ReaderEntity reader;
     @Column(name = "taken_on", nullable = false)
     private Instant takenOn;
     @Column(name = "due_on", nullable = false)
