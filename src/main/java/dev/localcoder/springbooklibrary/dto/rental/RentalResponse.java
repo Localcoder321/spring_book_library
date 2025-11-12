@@ -1,5 +1,6 @@
 package dev.localcoder.springbooklibrary.dto.rental;
 
+import dev.localcoder.springbooklibrary.entity.RentalEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,4 +19,17 @@ public class RentalResponse {
     private Instant takenOn;
     private Instant dueOn;
     private Instant returnedOn;
+
+    public static RentalResponse from(RentalEntity entity) {
+        return new RentalResponse(
+                entity.getId(),
+                entity.getBook().getId(),
+                entity.getBook().getTitle(),
+                entity.getReader().getId(),
+                entity.getReader().getName(),
+                entity.getTakenOn(),
+                entity.getDueOn(),
+                entity.getReturnedOn()
+        );
+    }
 }

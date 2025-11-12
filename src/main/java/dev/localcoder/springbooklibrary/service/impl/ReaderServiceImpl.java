@@ -64,7 +64,11 @@ public class ReaderServiceImpl implements ReaderService {
                         reader.getName(),
                         reader.getEmail(),
                         reader.getRegisteredOn(),
-                        null)).toList();
+                        null,
+                        reader.getRoles().stream()
+                                .map(role -> role.getName())
+                                .collect(Collectors.toSet())
+                        )).toList();
     }
 
     private ReaderResponse toResponse(ReaderEntity reader) {

@@ -3,8 +3,10 @@ package dev.localcoder.springbooklibrary.service.impl;
 import dev.localcoder.springbooklibrary.dto.auth.AuthResponse;
 import dev.localcoder.springbooklibrary.dto.auth.LoginRequest;
 import dev.localcoder.springbooklibrary.dto.auth.RegisterRequest;
+import dev.localcoder.springbooklibrary.dto.reader.ReaderResponse;
 import dev.localcoder.springbooklibrary.entity.ReaderEntity;
 import dev.localcoder.springbooklibrary.entity.RoleEntity;
+import dev.localcoder.springbooklibrary.exception.NotFoundException;
 import dev.localcoder.springbooklibrary.repository.ReaderRepository;
 import dev.localcoder.springbooklibrary.repository.RoleRepository;
 import dev.localcoder.springbooklibrary.security.JwtService;
@@ -12,6 +14,7 @@ import dev.localcoder.springbooklibrary.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -56,5 +59,12 @@ public class AuthServiceImpl implements AuthService {
         Set<String> roleNames = reader.getRoles().stream().map(RoleEntity::getName).collect(Collectors.toSet());
         String token = jwtService.generateToken(reader.getEmail(), roleNames);
         return new AuthResponse(token);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ReaderResponse getCurrentUser(String email) {
+        ReaderEntity reader = readerRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found"));
+        return ReaderResponse.from(reader);
     }
 }
